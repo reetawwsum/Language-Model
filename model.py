@@ -12,6 +12,7 @@ class Model():
 		self.batch_size = config.batch_size
 		self.num_unrollings = config.num_unrollings
 		self.vocabulary_size = config.vocabulary_size
+		self.embedding_size = config.embedding_size
 		self.num_units = config.num_units
 		self.num_hidden_layers = config.num_hidden_layers
 		self.learning_rate = config.learning_rate
@@ -55,7 +56,7 @@ class Model():
 			self.data, self.target = placeholder_input(self.batch_size, self.num_unrollings)
 
 			# Converting data to embeddings
-			self.embedding = embeddings(self.data, self.vocabulary_size, self.num_units)
+			self.embedding = embeddings(self.data, self.vocabulary_size, self.embedding_size)
 
 			# Creating placeholder for LSTM dropout
 			self.input_keep_prob = self.output_keep_prob = placeholder_dropout()
