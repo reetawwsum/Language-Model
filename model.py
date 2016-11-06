@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import tensorflow as tf
 
 from ops import *
@@ -13,6 +15,10 @@ class Model():
 		self.num_units = config.num_units
 		self.num_hidden_layers = config.num_hidden_layers
 		self.learning_rate = config.learning_rate
+		self.checkpoint_epoch = config.checkpoint_epoch
+		self.epochs = config.epochs
+		self.train_input_keep_prob = config.input_keep_prob
+		self.train_output_keep_prob = config.output_keep_prob
 
 		self.build_model()
 
@@ -66,3 +72,25 @@ class Model():
 
 			# Adding train op to the grpah
 			self.train_op()
+
+	def train(self):
+		with tf.Session(graph=self.graph) as self.sess:
+			init = tf.initialize_all_variables()
+			self.sess.run(init)
+			print('Graph Initialized')
+
+			train_batches = BatchGenerator(self.config)
+
+			steps_in_one_epoch = ((train_batches.dataset_size / self.batch_size) / self.num_unrollings)
+			checkpoint_step = self.checkpoint_epoch * steps_in_one_epoch
+
+			for step in xrange(self.epochs * steps_in_one_epoch + 1):
+				train_data = train_batches.next()
+
+				feed_dict = {self.data: train_data[:, :-1], self.target: train_data[:, 1:], self.input_keep_prob: self.train_input_keep_prob, self.output_keep_prob: self.train_output_keep_prob}
+
+				_, l = self.sess.run([self.optimizer, self.loss], feed_dict=feed_dict)
+
+				if not step % checkpoint_step:
+					epoch = step / checkpoint_step
+					print('Loss at Epoch %d: %f' % (epoch, l))

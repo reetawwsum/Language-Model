@@ -73,8 +73,11 @@ class BatchGenerator():
 
 	def sequence(self, position):
 		'''Generate a sequence from a cursor position'''
-		sequence = self.data[self.cursor[position]:self.cursor[position] + self.num_unrollings + 1]
-		self.cursor[position] = (self.cursor[position] + self.num_unrollings + 1) % self.dataset_size
+		sequence = []
+
+		for _ in xrange(self.num_unrollings + 1):
+			sequence.append(self.data[self.cursor[position]])
+			self.cursor[position] = (self.cursor[position] + 1) % self.dataset_size
 
 		return sequence
 
