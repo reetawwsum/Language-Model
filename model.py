@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import os
 import tensorflow as tf
 
 from ops import *
@@ -20,6 +21,8 @@ class Model():
 		self.epochs = config.epochs
 		self.train_input_keep_prob = config.input_keep_prob
 		self.train_output_keep_prob = config.output_keep_prob
+		self.checkpoint_dir = config.checkpoint_dir
+		self.model_name = config.model_name
 
 		self.build_model()
 
@@ -48,6 +51,11 @@ class Model():
 
 		self.optimizer = optimizer.minimize(self.loss)
 
+	def create_saver(self):
+		saver = tf.train.Saver()
+
+		self.saver = saver
+
 	def build_model(self):
 		self.graph = tf.Graph()
 
@@ -74,6 +82,9 @@ class Model():
 			# Adding train op to the grpah
 			self.train_op()
 
+			# Creating saver
+			self.create_saver()
+
 	def train(self):
 		with tf.Session(graph=self.graph) as self.sess:
 			init = tf.initialize_all_variables()
@@ -94,4 +105,8 @@ class Model():
 
 				if not step % checkpoint_step:
 					epoch = step / checkpoint_step
+					self.save(epoch)
 					print('Loss at Epoch %d: %f' % (epoch, l))
+
+	def save(self, global_step):
+		self.saver.save(self.sess, os.path.join(self.checkpoint_dir, self.model_name), global_step=global_step)

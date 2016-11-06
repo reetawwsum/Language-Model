@@ -19,7 +19,9 @@ flags.DEFINE_string('dataset', 'ptb', 'Name of dataset file')
 flags.DEFINE_string('batch_dataset_type', 'train', 'Dataset used for generating training batches')
 flags.DEFINE_string('validation_dataset_type', 'valid', 'Dataset used for validation')
 flags.DEFINE_string('test_dataset_type', 'test', 'Dataset used for testing')
+flags.DEFINE_string('model_name', 'rnn-lstm', 'Name of the model')
 flags.DEFINE_string('dataset_dir', 'data', 'Directory name for the dataset')
+flags.DEFINE_string('checkpoint_dir', 'checkpoint', 'Directory name to save the checkpoint')
 FLAGS = flags.FLAGS
 
 def main(_):
