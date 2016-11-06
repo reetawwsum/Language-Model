@@ -29,7 +29,7 @@ class Model():
 		cell = tf.nn.rnn_cell.MultiRNNCell([cell] * self.num_hidden_layers)
 
 		# Creating Unrolled LSTM
-		hidden, _ = tf.nn.dynamic_rnn(cell, self.data, dtype=tf.float32)
+		hidden, _ = tf.nn.dynamic_rnn(cell, self.embedding, dtype=tf.float32)
 
 		# Creating output at each time step
 		reshaped_hidden = tf.reshape(hidden, (-1, self.num_units))
@@ -52,10 +52,10 @@ class Model():
 
 		with self.graph.as_default():
 			# Creating placeholder for data
-			data, self.target = placeholder_input(self.batch_size, self.num_unrollings)
+			self.data, self.target = placeholder_input(self.batch_size, self.num_unrollings)
 
 			# Converting data to embeddings
-			self.data = embeddings(data, self.vocabulary_size, self.num_units)
+			self.embedding = embeddings(self.data, self.vocabulary_size, self.num_units)
 
 			# Creating placeholder for LSTM dropout
 			self.input_keep_prob = self.output_keep_prob = placeholder_dropout()

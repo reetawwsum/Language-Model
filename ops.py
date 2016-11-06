@@ -6,9 +6,9 @@ def placeholder_input(batch_size, num_unrollings):
 
 	return data, target
 
-def embeddings(data, vocabulary_size, num_units):
-	weights = tf.Variable(tf.random_uniform((vocabulary_size, num_units), -1.0, 1.0))
-	embedding = tf.nn.embedding_lookup(weights, data)
+def embeddings(data, vocabulary_size, embedding_size):
+	params = tf.Variable(tf.random_uniform((vocabulary_size, embedding_size), -1.0, 1.0))
+	embedding = tf.nn.embedding_lookup(params, data)
 
 	return embedding
 
