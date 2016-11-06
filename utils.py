@@ -8,9 +8,7 @@ class Dataset():
 	'''Load dataset'''
 	def __init__(self, config, dataset_type):
 		self.config = config
-		self.dataset_type = dataset_type
-		self.file_name = os.path.join(config.dataset_dir, config.dataset)
-		self.validation_size = config.validation_size
+		self.file_name = os.path.join(config.dataset_dir, config.dataset + '.' + dataset_type + '.txt')
 
 		self.load_dataset()
 
@@ -18,17 +16,13 @@ class Dataset():
 		self.load()
 		self.build_vocabulary()
 		self.convert_words_to_wordids()
-		train_words, validation_words = self.split()
 
-		if self.dataset_type == 'train_dataset':
-			self.data = train_words
-		else:
-			self.data = validation_words
+		self.data = self.wordids
 
 	def load(self):
 		'''Reading dataset as a list of words'''
-		with zipfile.ZipFile(self.file_name) as f:
-			words = tf.compat.as_str(f.read(f.namelist()[0])).split()
+		with open(self.file_name, 'rb') as f:
+			words = tf.compat.as_str(f.read()).split()
 
 		self.words = words
 
@@ -46,12 +40,6 @@ class Dataset():
 		words = [self.id2words[id] for id in wordids]
 
 		return words
-
-	def split(self):
-		validation_words = self.wordids[:self.validation_size]
-		train_words = self.wordids[self.validation_size:]
-
-		return train_words, validation_words
 
 class BatchGenerator():
 	'''Generate Batches'''
